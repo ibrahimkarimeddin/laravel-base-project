@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\User4Controller;
+use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,6 @@ Route::prefix('user')->group(function(){
     Route::post('/add' , [User4Controller::class , 'add']);
     Route::post('/update' , [User4Controller::class , 'update']);
     Route::post('/delete' , [User4Controller::class , 'delete']);
-}); 
+});
+
+Route::get('/test', [TestController::class ,'test']);

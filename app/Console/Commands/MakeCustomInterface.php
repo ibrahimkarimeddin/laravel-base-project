@@ -22,7 +22,8 @@ class MakeCustomInterface extends Command
 
         $segments = explode('/', $name);
         $interfaceName = array_pop($segments) . 'Interface';
-        $interfaceNamespace = 'App\\Interfaces\\' . implode('\\', $segments);
+
+        $interfaceNamespace = 'App\\Interfaces' . (count($segments) == "0" ?null :"\\".implode('\\', $segments));
 
         $interfaceContent = "<?php\n\nnamespace $interfaceNamespace;\n\ninterface $interfaceName\n{\n    // Define your interface methods here\n}\n";
         $directory = app_path('Interfaces/' . implode('/', $segments));

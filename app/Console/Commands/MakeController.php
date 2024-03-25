@@ -112,6 +112,7 @@ class MakeController extends Command
         STUB;
 
 
+
         $NAMESPACE  = $namespace ? $namespace .DIRECTORY_SEPARATOR . $name : $name;
         // dd($NAMESPACE);
         $convertedString = str_replace('/', '\\', $NAMESPACE);
@@ -121,7 +122,7 @@ class MakeController extends Command
         $stub3 = str_replace('{{NAME}}', $name, $stub2);
         $stub4 = str_replace('{{NAMESPACE}}', $convertedString, $stub3);
         $stub5 = str_replace('{{lower_case_name}}', $lower_case_name_controller, $stub4);
-        $stub6 = str_replace('{{NAMESPACE2}}', $namespace, $stub5);
+        $stub6 = str_replace('{{NAMESPACE2}}', "\\" .$namespace, $stub5);
 
 
         file_put_contents($path, $stub6);

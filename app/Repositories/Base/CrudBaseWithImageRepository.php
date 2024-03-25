@@ -1,19 +1,19 @@
 <?php
-
 namespace App\Repositories\Base;
 
-use App\Interfaces\Base\CrudRepositoryInterface;
 use App\Services\ImageService;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
 
-abstract class CrudBaseRepository implements CrudRepositoryInterface
-{
+abstract class CrudBaseWithImageRepository {
+
     protected Model $model;
     protected array $relations = [];
     public array $filterable;
 
+    public  string $image_name_request = 'image';
 
+    public string  $image_name_model = 'image';
+    public string  $image_path_location = "base";
 
 
     public function __construct(Model $model)
@@ -29,32 +29,51 @@ abstract class CrudBaseRepository implements CrudRepositoryInterface
                 'created_at' =>'desc'
             ],
             'custom'=> function($query){
-                // $query->select('id');
+                $query->select('id');
             },
 
 
         ];
     }
 
+
+
     public function create($data): Model
     {
+        $image  =  ImageService::upload_image(new_image:$data[$this->image_name_request] ,upload_location:$this->image_path_location );
+        return $this->model->create(array_merge($data ,[
 
-        return $this->model->create($data);
+            $this->image_name_model => $image
+        ]));
     }
-
-
 
     public function edit(int $id,  $data): Model
     {
         $object =$this->findByID($id);
-        $object->update($data);
+        $image  = $object[$this->image_name_model];
+        if(isset($data[$this->image_name_request])){
+            $image  = ImageService::update_image(new_image:$data[$this->image_name_request] , old_image_name:$image ,upload_location: $this->image_path_location);
+        }
+
+
+
+        $object->update(array_merge($data ,[
+
+            $this->image_name_model => $image
+        ]));
 
         return $object;
     }
 
     public function delete(int $id): bool
     {
-        return (bool) $this->findByID($id)->delete();
+
+
+        $object =   $this->findByID($id);
+
+        ImageService::delete_image($object[$this->image_name_model]);
+
+        return (bool) $object->delete();
     }
 
     public function getAll($is_pagination  , int $perPage = 8, $search=null )
